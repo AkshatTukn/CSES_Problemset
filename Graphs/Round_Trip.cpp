@@ -108,93 +108,73 @@ FAST;
 const int rn= 3e5+5;
 ll n,m,k;
 V<int>adj[MX];
-//ll a[MX],b[10001],dp[MX],dp1[MX];
+ll a[MX],b[10001],dp[MX],vis[MX];
 ll X,Y;
-char a[2001][2001];
-int vis[2001][2001];
-int prev1[2001][2001];
-string stepDir = "URDL";
-bool ok(int i,int j)
+void dfs(int x,int par)
 {
-    return (i<0 || i>=n || j<0 || j>=m );
+    vis[x]=1;
+    for(int k:adj[x])
+    {
+        if(k==par){continue;}
+        if(!vis[k])
+        {
+            dp[k]=x;
+            dfs(k,x);
+        }else 
+        {
+               // already vis
+            V<int>store;
+            int cur=k;
+            store.pb(k);
+            while(dp[x]!=k)
+            {
+              store.pb(x);
+              x=dp[x];
+            }
+             store.pb(x);
+          store.pb(k);
+          cout<<store.size()<<endl;
+          for(int k:store)
+          {
+            cout<<k+1<<" ";
+          }
+          //cout<<store.size()<<endl;
+
+            exit(0);
+
+        }
+    }
+
 }
+
 
 int main()
 {
 init_code();
+//FAST;
 cout<<setprecision(12)<<fixed;
 int tes=1;
-//compPrimes(rn);
+//compPrimes(NX);
 //cin>>tes;
 while(tes--)
-{ 
+{  
     cin>>n>>m;
-    PII st,end;
-    mset(vis,0);
-    loop(i,0,n)
-    {
-        loop(j,0,m)
-        {
-            cin>>a[i][j];
-            if(a[i][j]=='A')
-            {
-                st={i,j};
-            }
-            if(a[i][j]=='B')
-            {
-                end={i,j};
-            }
-        }
-    }
-
-Q<PII>q;
-q.push(st);
-vis[st.F][st.S]=1;
-while(!q.empty())
+    loop(i,0,m)
+     {
+        int x,y; cin>>x>>y;
+        --x; --y;
+        adj[x].pb(y);
+        adj[y].pb(x);
+     }
+mset(vis,0);
+loop(i,0,n)
 {
-   auto j= q.front();
-   q.pop();
-   int x=j.F; int y=j.S;
-   loop(k,0,4)
-   {
-    int nx= x+dx[k];
-    int ny= y+dy[k];
-    if(ok(nx,ny)){continue;}
-    if(a[nx][ny]=='#'){continue;}
-    if((vis[nx][ny]==1)){continue;}
-     vis[nx][ny]=1;
-     prev1[nx][ny]=k;
-     q.push({nx,ny});
-   }
-
+    if(!vis[i])
+    {
+        dfs(i,-1);
+    }
 }
-
-
-//cout<<vis[end.F][end.S]<<endl;
-if(vis[end.F][end.S])
-{
-    vector<int>store;
-    cout<<"YES"<<endl;
-    while(end!=st)
-    {
-        store.push_back(prev1[end.F][end.S]);
-        int cur=prev1[end.F][end.S];
-        end= {end.F-dx[cur],end.S-dy[cur]};
-    }
-    reverse(all(store));
-    cout<<store.size()<<endl;
-    for(int k:store)
-    {
-        cout<<stepDir[k];
-    }
-
-}else
-{
-    cout<<"NO"<<endl;
-}
-
-
-
+cout<<"IMPOSSIBLE"<<endl;
 
  
 }
